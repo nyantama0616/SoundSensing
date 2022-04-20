@@ -3,14 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../dest/css/index.css">
     <title>SoundSensing</title>
 </head>
 <body>
-    <!-- <script>
-        let t = window.navigator.requestMIDIAccess()
-        console.log(t);
+    <div id="app-container">
+        <!-- トップページ -->
+        <div id="top-page" class="disappear">
+            <button id="start-button">
+                <p>Start Training</p>
+            </button>
+            <div id="params">
+                <ul>
+                    <li>
+                        <div>status: <span id="status"></span></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
         
-    </script> -->
-    <script src="../src/js/out.js"></script>
+        <!-- トレーニングページ -->
+        <div id="training-page" class="disappear"></div>
+    </div>
+    <script src="../dest/js/out.js"></script>
 </body>
 </html>
