@@ -21,11 +21,10 @@ module TopPage {
     }
 
     export function run() {
-        console.log("TopPage");
         appear();
         const startButton = document.getElementById("start-button");
         startButton?.addEventListener("click", () => {
-            console.log("start!");
+            if (appManager.status !== AppStatus.TOP_PAGE) { return; }
             disappear();
             TrainingPage.run();
         });

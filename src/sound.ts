@@ -28,7 +28,7 @@ function playCode(output: WebMidi.MIDIOutput, notes: any[], interval = 0, time =
     }
 }
 
-// アクセス時用の音楽
+// App開始時の音楽
 function startMusic(midi: WebMidi.MIDIAccess) {
     if (midi.outputs.size < 1) { return }
     const output = Array.from(midi.outputs).map((output) => output[1])[0];

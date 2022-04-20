@@ -5,6 +5,6 @@
 /// <reference path="sound.ts"/>
 /// <reference path="MIDIManager.ts"/>
 
-// TopPage.run();
-/// <reference path="TrainingPage.ts"/>
-TrainingPage.run();
+TopPage.run();
+///// <reference path="TrainingPage.ts"/>
+// TrainingPage.run();

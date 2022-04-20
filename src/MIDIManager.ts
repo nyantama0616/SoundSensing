@@ -1,6 +1,7 @@
 // MIDIとのやり取りについてのファイル
 
 /// <reference path="AppManager.ts"/>
+/// <reference path="Key.ts"/>
 
 module MIDIManager {
     // input先とoutputs先のMIDIをすべて列挙
@@ -20,17 +21,20 @@ module MIDIManager {
         const input = Array.from(midi.inputs).map((output) => output[1])[0];
         input.onmidimessage = (e: WebMidi.MIDIMessageEvent) => {
             const data = e.data.slice(0, 3);
-    
             switch (data[0]) {
                 case 0x90:
-                    // console.log("ON!");
-                    // console.log(data);
+                    const hitKey = Key.getKey(data[1] - 21); //鍵盤が21から始まるから
+                    if (hitKey) {
+                        hitKey.onHit();
+                    }
                     break;
                 case 0x80:
-                    // console.log("OFF!");
+                    const releasedKey = Key.getKey(data[1] - 21);
+                    if (releasedKey) {
+                        releasedKey.onReleased();
+                    }
                     break;
                 default:
-                    // console.log("other", data);
                     break;
             }
         }

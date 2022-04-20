@@ -24,8 +24,88 @@ var AppManager = /** @class */ (function () {
     return AppManager;
 }());
 var appManager = new AppManager();
+var Key = /** @class */ (function () {
+    function Key(num) {
+        this._num = num;
+    }
+    Key.getKey = function (i) {
+        return Key.keys[i] || null;
+    };
+    // 鍵盤生成
+    Key.createKeyboad = function (par) {
+        if (par === null)
+            return;
+        var offset = 23; //この値で鍵盤の位置を指定
+        var keyNum = 21; //鍵盤番号
+        for (var i = 0; i < 88; i++) {
+            var div = document.createElement("div");
+            div.classList.add("key");
+            var img = document.createElement("img");
+            // 白鍵か黒鍵かで分ける
+            if (Key.scale[i % 12] === 1) {
+                div.classList.add("white");
+                img.src = "../assets/img/white_key.png";
+            }
+            else {
+                div.classList.add("black");
+                img.src = "../assets/img/black_key.png";
+            }
+            div.id = "k".concat(keyNum);
+            div.style.left = "".concat(offset, "px");
+            div.appendChild(img);
+            par.appendChild(div);
+            var bit = Key.scale[(i + 1) % 12] + Key.scale[i % 12] * 2;
+            switch (bit) {
+                case 1:
+                    offset += 5.72;
+                    break;
+                case 2:
+                    offset += 28.6;
+                    break;
+                case 3:
+                    offset += 34.32;
+                    break;
+            }
+            var key = new Key(keyNum);
+            Key.keys.push(key);
+            ++keyNum;
+        }
+    };
+    // keyに対応するHTML上のdiv要素を取得
+    Key.prototype.getDiv = function () {
+        var id = "k".concat(this._num);
+        return document.getElementById(id) || null;
+    };
+    Key.prototype.addFilter = function (filterName) {
+        var div = this.getDiv();
+        var filter = document.createElement("div");
+        filter.classList.add("filter");
+        filter.classList.add(filterName);
+        div === null || div === void 0 ? void 0 : div.appendChild(filter);
+    };
+    // 鍵盤が叩かれたときの処理
+    Key.prototype.onHit = function () {
+        this.addFilter("hit");
+    };
+    Key.prototype.onRight = function () {
+        this.addFilter("right");
+    };
+    Key.prototype.onMiss = function () {
+        this.addFilter("miss");
+    };
+    // 鍵盤が話されたときの処理
+    Key.prototype.onReleased = function () {
+        var div = this.getDiv();
+        div.removeChild(div.lastChild);
+    };
+    Key.keys = [];
+    Key.scale = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0]; //Aから始まる
+    Key.imgPath = "../assets/img/";
+    return Key;
+}());
 // MIDIとのやり取りについてのファイル
 /// <reference path="AppManager.ts"/>
+/// <reference path="Key.ts"/>
 var MIDIManager;
 (function (MIDIManager) {
     // input先とoutputs先のMIDIをすべて列挙
@@ -49,14 +129,18 @@ var MIDIManager;
             var data = e.data.slice(0, 3);
             switch (data[0]) {
                 case 0x90:
-                    // console.log("ON!");
-                    // console.log(data);
+                    var hitKey = Key.getKey(data[1] - 21); //鍵盤が21から始まるから
+                    if (hitKey) {
+                        hitKey.onHit();
+                    }
                     break;
                 case 0x80:
-                    // console.log("OFF!");
+                    var releasedKey = Key.getKey(data[1] - 21);
+                    if (releasedKey) {
+                        releasedKey.onReleased();
+                    }
                     break;
                 default:
-                    // console.log("other", data);
                     break;
             }
         };
@@ -65,51 +149,16 @@ var MIDIManager;
 })(MIDIManager || (MIDIManager = {}));
 // トレーニングモード時の画面、処理
 /// <reference path="AppManager.ts"/>
+/// <reference path="Key.ts"/>
 var TrainingPage;
 (function (TrainingPage) {
-    function createKeyboad(par) {
-        if (par === null)
-            return;
-        var scale = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0];
-        var offset = 23;
-        for (var i = 0; i < 88; i++) {
-            var div = document.createElement("div");
-            div.classList.add("key");
-            var img = document.createElement("img");
-            // 白鍵か黒鍵かで分ける
-            if (scale[i % 12] == 1) {
-                div.classList.add("white");
-                img.src = "../assets/img/white_key.png";
-            }
-            else {
-                div.classList.add("black");
-                img.src = "../assets/img/black_key.png";
-            }
-            div.style.left = "".concat(offset, "px");
-            div.appendChild(img);
-            par.appendChild(div);
-            var bit = scale[(i + 1) % 12] + scale[i % 12] * 2;
-            switch (bit) {
-                case 1:
-                    offset += 5.72;
-                    break;
-                case 2:
-                    offset += 28.6;
-                    break;
-                case 3:
-                    offset += 34.32;
-                    break;
-            }
-        }
-        console.log(offset + 43);
-    }
     function appear() {
         appManager.status = AppStatus.TRAINING_PAGE;
         var el = document.getElementById("training-page");
         if (el !== null) {
             el.classList.remove("disappear");
         }
-        createKeyboad(el);
+        Key.createKeyboad(el);
     }
     function disappear() {
         appManager.status = AppStatus.OTHER;
@@ -120,7 +169,6 @@ var TrainingPage;
     }
     function run() {
         appear();
-        console.log("TrainingPage");
     }
     TrainingPage.run = run;
 })(TrainingPage || (TrainingPage = {}));
@@ -145,11 +193,12 @@ var TopPage;
         }
     }
     function run() {
-        console.log("TopPage");
         appear();
         var startButton = document.getElementById("start-button");
         startButton === null || startButton === void 0 ? void 0 : startButton.addEventListener("click", function () {
-            console.log("start!");
+            if (appManager.status !== AppStatus.TOP_PAGE) {
+                return;
+            }
             disappear();
             TrainingPage.run();
         });
@@ -193,7 +242,7 @@ function playCode(output, notes, interval, time) {
         }
     }
 }
-// アクセス時用の音楽
+// App開始時の音楽
 function startMusic(midi) {
     if (midi.outputs.size < 1) {
         return;
@@ -222,6 +271,6 @@ function startMusic(midi) {
 /// <reference path="TopPage.ts"/>
 /// <reference path="sound.ts"/>
 /// <reference path="MIDIManager.ts"/>
-// TopPage.run();
-/// <reference path="TrainingPage.ts"/>
-TrainingPage.run();
+TopPage.run();
+///// <reference path="TrainingPage.ts"/>
+// TrainingPage.run();
