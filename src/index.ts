@@ -1,6 +1,11 @@
-/// <reference path="./log.ts"/>
-/// <reference path="./hello.ts"/>
+// エントリーポイント
 
-let txt = f();
-console.log(txt);
-console.log(hello());
+/// <reference path="AppManager.ts"/>
+/// <reference path="TopPage.ts"/>
+/// <reference path="sound.ts"/>
+/// <reference path="MIDIManager.ts"/>
+/// <reference path="TrainingPage.ts"/>
+
+TopPage.run();
+
+// // TrainingPage.run();
