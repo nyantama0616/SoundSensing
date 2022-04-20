@@ -6,7 +6,7 @@
     "rootDir": "./",                                  /* Specify the root folder within your source files. */
     "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
     "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */                              /* Specify multiple folders that act like `./node_modules/@types`. */
-    "types": ["webmidi"],                                      /* Specify type package names to be included without being referenced in a source file. */
+    "types": ["webmidi", "tone"],                                      /* Specify type package names to be included without being referenced in a source file. */
     "outDir": "./src/js",                                   /* Specify an output folder for all emitted files. */
     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */

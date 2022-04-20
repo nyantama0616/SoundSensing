@@ -21,6 +21,7 @@ module MIDIManager {
         const input = Array.from(midi.inputs).map((output) => output[1])[0];
         input.onmidimessage = (e: WebMidi.MIDIMessageEvent) => {
             const data = e.data.slice(0, 3);
+        
             switch (data[0]) {
                 case 0x90:
                     const hitKey = Key.getKey(data[1] - 21); //鍵盤が21から始まるから

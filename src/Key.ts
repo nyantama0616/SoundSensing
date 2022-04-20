@@ -48,9 +48,15 @@ class Key {
         }
     }
 
+    public static compare(x: Key, y: Key) {
+        return x.num < y.num ? 1 : -1;
+    }
+
     constructor(num: number) {
         this._num = num;
     }
+
+    get num(): number { return this.num; }
 
     // keyに対応するHTML上のdiv要素を取得
     private getDiv(): HTMLElement | null {
@@ -69,7 +75,13 @@ class Key {
 
     // 鍵盤が叩かれたときの処理
     onHit() {
-        this.addFilter("hit");
+        // this.addFilter("hit");
+        const check = appManager.training?.checkAnser(this._num);
+        if (check) {
+            this.onRight();
+        } else {
+            this.onMiss();
+        }
     }
     
     onRight() {
